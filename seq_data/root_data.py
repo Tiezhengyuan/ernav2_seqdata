@@ -12,4 +12,5 @@ class RootData:
     def __init__(self, samples:dict=None, variables:dict=None):
         self.samples = AnnotData(0, samples)
         self.variables = AnnotData(1, variables)
+        self.children = []
             

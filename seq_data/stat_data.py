@@ -14,29 +14,39 @@ class StatData:
         self.axis = 1 if axis else 0
         self.data = {}
 
-    def put(self, name:str, input:pd.Series=None):
+    def put(self, stat_name:str, input:pd.Series=None):
         '''
         update or create
         '''
         _data = pd.Series(None, dtype='float') if input is None else pd.Series(input)
-        _data.name = name
-        self.data[name] = _data
+        _data.name = stat_name
+        self.data[stat_name] = _data
 
-    def to_df(self, names:list=None, labels:list=None):
+    def to_df(self, key1:list=None, stat_names:list=None):
         '''
-        export colData as dataframe
+        export Data as dataframe
         '''
         if not self.data:
             return pd.DataFrame(None, dtype='float')
-        
-        _data = [self.data[i] for i in names if i in self.data and not self.data[i].empty] \
-            if names else [v for v in self.data.values() if not v.empty]
-        df = pd.concat(_data, axis=1)
-        if labels:
-            df = df.reindex(labels)
-        if self.axis == 1:
-            return df.fillna(0).transpose()
-        return df.fillna(0)
+
+        # pd.series in list
+        _data = {}
+        if stat_names:
+            for k in stat_names:
+                if k in self.data:
+                    _data[k] = self.data[k]
+                else:
+                    n = pd.Series(None, dtype='float')
+                    n.name = k
+                    _data[k] = n
+        else:
+            _data = self.data
+        # convert
+        df = pd.concat(_data.values(), axis=1)
+        if key1:
+            df = df.reindex(key1)
+        df = df.fillna(0).transpose() if self.axis == 1 else df.fillna(0)
+        return df
 
 
     

@@ -13,8 +13,9 @@ class NodeData:
     is_root = False
 
     def __init__(self, parent:RootData, name:str, X:pd.DataFrame=None):
-        self.parent = parent
-        self.name = name
+        self.parent, self.children = parent, []
+        parent.children.append(self)
+        self.name = name if name else 'default'
         self.X = pd.DataFrame(X, dtype='float')
         # cross row
         self.samples = parent.samples
@@ -28,16 +29,26 @@ class NodeData:
             return self.parent.get_root()
         return self
 
-    def row_labels(self, labels:list=None) -> pd.DataFrame:
+    def row_labels(self, labels:set=None) -> pd.DataFrame:
         key1 = list(self.X.index)
-        _annot = self.samples.to_df(key1, labels)
-        _stat = self.row_stat.to_df(key1, labels)
+        # stat data
+        stat_names = set(self.row_stat.data)
+        stat_labels = stat_names.intersection(labels) if labels else []
+        _stat = self.row_stat.to_df(key1, list(stat_labels),)
+        # annot data
+        annot_labels = list(labels.difference(stat_names)) if labels else []
+        _annot = self.samples.to_df(key1, list(annot_labels),)
         return pd.concat([_annot, _stat], axis=1).fillna('-')
 
-    def col_labels(self, labels:list=None) -> pd.DataFrame:
+    def col_labels(self, labels:set=None) -> pd.DataFrame:
         key1 = list(self.X)
-        _var = self.variables.to_df(key1, labels)
-        _stat = self.col_stat.to_df(key1, labels)
+        # stat data
+        stat_names = set(self.col_stat.data)
+        stat_labels = stat_names.intersection(labels) if labels else []
+        _stat = self.col_stat.to_df(key1, list(stat_labels),)
+        # annot data
+        annot_labels = list(labels.difference(stat_names)) if labels else []
+        _var = self.variables.to_df(key1, list(annot_labels),)
         return pd.concat([_var, _stat], axis=0).fillna('-')
 
     def put_data(self, new_data:pd.Series):
@@ -65,6 +76,18 @@ class NodeData:
             return _x + _y
         return s1.combine(s2, func)
 
-    def to_df(self, row_label_names:list=None, col_label_names:list=None):
-        row_data = self.row_labels(row_label_names)
-        _data = pd.concat([row_data, self.X], axis=1) if row_data else self.X
+    def to_df_samples(self, labels:set=None) -> pd.DataFrame:
+        # add sample data to the left side
+        _data = self.row_labels(labels)
+        if not _data.empty:
+            _data = pd.concat([_data, self.X], axis=1)
+            return _data
+        return self.X
+
+    def to_df_variables(self, labels:set=None) -> pd.DataFrame:
+        # add features data to the top side
+        _data = self.col_labels(labels)
+        if not _data.empty:
+            _data = pd.concat([_data, self.X], axis=0)
+            return _data
+        return self.X

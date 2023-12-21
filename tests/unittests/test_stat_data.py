@@ -22,44 +22,48 @@ class TestStatData(TestCase):
         assert c.data['a'].shape == (4,)
         assert list(c.data) == ['a', 'b']
 
-    '''
+    
     @data(
-        [None, None, (4,2), list('abcd')],
-        [None, list('abcf'), (4,2), list('abcf')],
-        [['A'], list('abc'), (3,1), list('abc')],
-        [['A'], list('bca'), (3,1), list('bca')],
-        [['A','E'], list('abc'), (3,1), list('abc')],
-        [['B',], None, (4,1), list('bcad')],
+        [None, None, (3, 4), list('ABC'), list('abcd')],
+        [None, list('abcf'), (3, 4), list('ABC'), list('abcf')],
+        [['A'], list('abc'), (1, 3), ['A'], list('abc')],
+        [['A'], list('bca'), (1, 3), ['A'], list('bca')],
+        [['A','E'], list('abc'), (2, 3), ['A', 'E'], list('abc')],
+        [['B',], None, (1, 4), ['B'], list('bcad')],
     )
     @unpack
-    def test_to_df_row(self, names, labels, expect_shape, expect_index):
+    def test_to_df_row(self, names, labels, expect_shape, \
+            expect_row, expect_col):
         c = StatData(0)
         c.put('A', s1)
         c.put('B', s2)
         c.put('C')
         res = c.to_df(names, labels)
         assert res.shape == expect_shape
-        assert list(res.index) == expect_index
+        assert list(res) == expect_col
+        assert list(res.index) == expect_row
 
 
     @data(
-        [None, None, (2,4), list('abcd')],
-        [None, list('abcf'), (2,4), list('abcf')],
-        [['A'], list('abc'), (1,3), list('abc')],
-        [['A'], list('bca'), (1,3), list('bca')],
-        [['A','E'], list('abc'), (1,3), list('abc')],
-        [['B'], None, (1,4), list('bcad')],
+        [None, None, (4, 3), list('abcd'), list('ABC')],
+        [None, list('abcf'), (4, 3), list('abcf'), list('ABC')],
+        [['A'], list('abc'), (3, 1), list('abc'), ['A']],
+        [['A'], list('bca'), (3, 1), list('bca'), ['A']],
+        [['A','E'], list('abc'), (3, 2), list('abc'), list('AE')],
+        [['B'], None, (4,1), list('bcad'), ['B']],
     )
     @unpack
-    def test_to_df_col(self, names, labels, expect_shape, expect_columns):
+    def test_to_df_col(self, names, labels, expect_shape, \
+            expect_row, expect_col):
         c = StatData(1)
         c.put('A', s1)
         c.put('B', s2)
         c.put('C')
         res = c.to_df(names, labels)
         assert res.shape == expect_shape
-        assert list(res) == expect_columns
-    '''
+        assert list(res) == expect_col
+        assert list(res.index) == expect_row
+    
     @data(
         [0, None, None, (0,0)],
         [0, ['sample1'], None, (0,0)],
@@ -67,7 +71,7 @@ class TestStatData(TestCase):
         [1, ['gene1'], None, (0,0)],
     )
     @unpack
-    def test_to_df_empty(self, axis, names, labels, expect_shape):
+    def test_to_df_empty(self, axis, key1, key2, expect_shape):
         c = StatData(axis)
-        res = c.to_df(names, labels)
+        res = c.to_df(key1, key2)
         assert res.shape == expect_shape
