@@ -1,4 +1,5 @@
 '''
+SeqData(): A container include root and all nodes
 '''
 
 import pandas as pd
@@ -9,10 +10,10 @@ from .node_data import NodeData
 
 
 class SeqData:
-    nodes = {}
 
-    def __init__(self, root:RootData):
-        self.root = root
+    def __init__(self, root:RootData=None):
+        self.root = root if root else RootData()
+        self.nodes = {}
     
     def data_names(self) -> list:
         return list(self.nodes)
@@ -24,16 +25,16 @@ class SeqData:
         '''
         create/update node data
         '''        
-        parent = self.nodes[parent_name] if parent_name in self.nodes else self.root
+        parent = self.nodes.get(parent_name, self.root)
         new_data = NodeData(parent, name, X)
         self.nodes[name] = new_data
         return new_data
 
-    def to_df(self, data_name:str, expand_axis:int=None):
+    def to_df(self, data_name:str, expand_axis:int=None, labels:set=None):
         expand_axis = 1 if expand_axis else 0
         if data_name in self.nodes:
             node = self.nodes[data_name]
             if expand_axis == 0:
-                return node.to_df_samples()
-            return node.to_df_variables()
+                return node.to_df_samples(labels)
+            return node.to_df_variables(labels)
         return None

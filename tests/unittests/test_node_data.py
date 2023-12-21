@@ -140,26 +140,26 @@ class TestNodeData(TestCase):
     @data(
         [
             RootData(), None, (3, 3),
-            ['gene1','gene2','gene3',],
-            ['sample1','sample2','sample3'],
+            {'gene1','gene2','gene3',},
+            {'sample1','sample2','sample3'},
         ],
         [
             RootData(samples, annot), None, (3, 6),
-            ['sample_name', 'age', 'gender', 'gene1','gene2','gene3',],
-            ['sample1','sample2','sample3'],
+            {'sample_name', 'age', 'gender', 'gene1','gene2','gene3',},
+            {'sample1','sample2','sample3'},
         ],
-        # [
-        #     RootData(samples, annot), {'gender', 'age',},
-        #     (3, 5),
-        #     ['gender', 'age', 'gene1','gene2','gene3',],
-        #     ['sample1','sample2','sample3'],
-        # ],
-        # [
-        #     RootData(samples, annot), {'gender', 'XX'},
-        #     (3, 5),
-        #     ['gender', 'XX', 'gene1','gene2','gene3',],
-        #     ['sample1','sample2','sample3'],
-        # ],
+        [
+            RootData(samples, annot), {'gender', 'age',},
+            (3, 5),
+            {'gender', 'age', 'gene1','gene2','gene3',},
+            {'sample1','sample2','sample3'},
+        ],
+        [
+            RootData(samples, annot), {'gender', 'XX'},
+            (3, 5),
+            {'gender', 'XX', 'gene1','gene2','gene3',},
+            {'sample1','sample2','sample3'},
+        ],
     )
     @unpack
     def test_to_df_samples(self, parent, labels, \
@@ -167,31 +167,31 @@ class TestNodeData(TestCase):
         c = NodeData(parent, 'test', df4)
         df = c.to_df_samples(labels)
         assert df.shape == expect_shape
-        assert list(df) == expect_col
-        assert list(df.index) == expect_row
+        assert set(df) == expect_col
+        assert set(df.index) == expect_row
 
     @data(
         [
             RootData(), None,
-            (3, 3), ['gene1','gene2','gene3',],
-            ['sample1','sample2','sample3'],
+            (3, 3), {'gene1','gene2','gene3',},
+            {'sample1','sample2','sample3'},
         ],
         [
             RootData(samples, annot), None,
-            (7, 3), ['gene1','gene2','gene3',],
-            ['geneID', 'geneName', 'start', 'end', \
-                'sample1','sample2','sample3'],
+            (7, 3), {'gene1','gene2','gene3',},
+            {'geneID', 'geneName', 'start', 'end', \
+                'sample1','sample2','sample3'},
         ],
-        # [
-        #     RootData(samples, annot), {'geneID', 'start'},
-        #     (5, 3), ['gene1','gene2','gene3',],
-        #     ['geneID', 'start', 'sample1','sample2','sample3'],
-        # ],
-        # [
-        #     RootData(samples, annot), {'geneID', 'XX'},
-        #     (5, 3), ['gene1','gene2','gene3',],
-        #     ['geneID', 'XX', 'sample1','sample2','sample3'],
-        # ],
+        [
+            RootData(samples, annot), {'geneID', 'start'},
+            (5, 3), {'gene1','gene2','gene3',},
+            {'geneID', 'start', 'sample1','sample2','sample3'},
+        ],
+        [
+            RootData(samples, annot), {'geneID', 'XX'},
+            (5, 3), {'gene1','gene2','gene3',},
+            {'geneID', 'XX', 'sample1','sample2','sample3'},
+        ],
     )
     @unpack
     def test_to_df_variables(self, parent, labels, \
@@ -199,8 +199,8 @@ class TestNodeData(TestCase):
         c = NodeData(parent, 'test', df4)
         df = c.to_df_variables(labels)
         assert df.shape == expect_shape
-        assert list(df) == expect_col
-        assert list(df.index) == expect_row
+        assert set(df) == expect_col
+        assert set(df.index) == expect_row
 
     def test_col_stat(self):
         root = RootData(samples, annot)
@@ -223,6 +223,16 @@ class TestNodeData(TestCase):
             'end', 'rc_range', 'rc_mean']
         assert list(df) == ['gene1', 'gene2', 'gene3']
 
+        df = c.col_labels({'geneName', 'rc_range'})
+        assert df.shape == (2, 3)
+        assert set(df.index) == {'geneName', 'rc_range'}
+        assert set(df) == {'gene1', 'gene2', 'gene3'}
+
+        df = c.col_labels({'geneName', 'xx', 'rc_range'})
+        assert df.shape == (3, 3)
+        assert set(df.index) == {'xx', 'geneName', 'rc_range'}
+        assert set(df) == {'gene1', 'gene2', 'gene3'}
+
     def test_row_stat(self):
         root = RootData(samples, annot)
         c = NodeData(root, 'RC', df4)
@@ -244,7 +254,11 @@ class TestNodeData(TestCase):
         assert list(df.index) == ['sample1', 'sample2', 'sample3']
 
         df = c.row_labels({'age', 'gene_max',})
-        # print(df)
-        # assert df.shape == (3, 2)
-        # assert list(df) == ['gender', 'gene_max']
-        # assert list(df.index) == ['sample1', 'sample2', 'sample3']
+        assert df.shape == (3, 2)
+        assert set(df) == {'age', 'gene_max'}
+        assert set(df.index) == {'sample1', 'sample2', 'sample3'}
+
+        df = c.row_labels({'xx', 'age', 'gene_max',})
+        assert df.shape == (3, 3)
+        assert set(df) == {'age', 'xx', 'gene_max'}
+        assert set(df.index) == {'sample1', 'sample2', 'sample3'}
