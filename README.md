@@ -13,13 +13,29 @@ SeqData is tree structure. The root contains data of phenotypes and annotations.
 
 <img src="static/SeqData_data_structure.png" width="350" height="300">
 
+## installation
+It is ok to install the repository using pip. The repository could be found at https://pypi.org/manage/project/rnaseqdata/releases/.
+```
+pip install rnaseqdata
+```
+
 ## Development
-Run unit testings
+```
+git clone git@github.com:Tiezhengyuan/ernav2_seqdata.git
+cd ernav2_seqdata
+```
+
+create virtual environment
+```
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+
+Unit testing
 ```
 pytest tests/unittests
 ```
-
-## installation
-
 
 

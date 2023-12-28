@@ -1,7 +1,7 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 from ddt import ddt, data, unpack
 
-from seq_data.annot_data import AnnotData
+from src.rnaseqdata import AnnotData
 from tests.data.constants import *
 
 @ddt

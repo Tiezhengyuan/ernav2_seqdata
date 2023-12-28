@@ -2,8 +2,7 @@ import numpy as np
 import pandas as pd
 from unittest import TestCase
 from ddt import ddt, data, unpack
-from seq_data.root_data import RootData
-from seq_data.seq_data import SeqData
+from src.rnaseqdata import RootData, SeqData
 
 from tests.data.constants import *
 

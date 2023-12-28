@@ -1,9 +1,7 @@
-from unittest import TestCase, mock
+from unittest import TestCase
 from ddt import ddt, data, unpack
 
-from seq_data.root_data import RootData
-from seq_data.node_data import NodeData
-
+from src.rnaseqdata import RootData, NodeData
 from tests.data.constants import *
 
 

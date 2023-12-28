@@ -1,13 +1,9 @@
-from copy import deepcopy
-from unittest import TestCase, mock
-from ddt import ddt, data, unpack
+from unittest import TestCase
 
-from seq_data.root_data import RootData
-
+from src.rnaseqdata import RootData
 from tests.data.constants import samples, annot
 
 
-@ddt
 class TestRootData(TestCase):
 
     def test_init(self):
