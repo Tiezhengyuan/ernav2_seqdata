@@ -14,9 +14,9 @@ SeqData is tree structure. The root contains data of phenotypes and annotations.
 <img src="static/SeqData_data_structure.png" width="350" height="300">
 
 ## installation
-It is ok to install the repository using pip. The repository could be found at https://pypi.org/manage/project/rnaseqdata/releases/.
+It is convenient to install the repository using pip. The repository could be found at https://pypi.org/manage/project/rnaseqdata/releases/.
 ```
-pip install rnaseqdata
+pip install --upgrade rnaseqdata
 ```
 
 ## Development
@@ -38,4 +38,22 @@ Unit testing
 pytest tests/unittests
 ```
 
+## quick tourial
+In Python3
+
+>>> from rnaseqdata import RootData, SeqData
+>>> import numpy as np
+>>> import pandas as pd
+
+Create SeqData
+
+>>> root = RootData()
+>>> c = SeqData(root)
+>>> c.put_data('test', np.eye(3), root)
+>>> c.to_df('test)
+
+     0    1    2
+0  1.0  0.0  0.0
+1  0.0  1.0  0.0
+2  0.0  0.0  1.0
 
