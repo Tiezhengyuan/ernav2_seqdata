@@ -41,19 +41,23 @@ pytest tests/unittests
 ## quick tourial
 In Python3
 
->>> from rnaseqdata import RootData, SeqData
->>> import numpy as np
->>> import pandas as pd
+```
+from rnaseqdata import RootData, SeqData
+import numpy as np
+import pandas as pd
+```
 
 Create SeqData
 
->>> root = RootData()
->>> c = SeqData(root)
->>> c.put_data('test', np.eye(3), root)
->>> c.to_df('test)
+```
+root = RootData()
+c = SeqData(root)
+c.put_data('test', np.eye(3), root)
+c.to_df('test)
+```
 
-     0    1    2
-0  1.0  0.0  0.0
-1  0.0  1.0  0.0
-2  0.0  0.0  1.0
+          0    1    2
+     0  1.0  0.0  0.0
+     1  0.0  1.0  0.0
+     2  0.0  0.0  1.0
 
