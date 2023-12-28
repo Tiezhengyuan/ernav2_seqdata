@@ -1,5 +1,7 @@
+import sys
+print(sys.path)
 from unittest import TestCase
-from seq_data.random_data import RandomData
+from rnaseqdata.random_data import RandomData
 
 
 class TestRandomData(TestCase):
