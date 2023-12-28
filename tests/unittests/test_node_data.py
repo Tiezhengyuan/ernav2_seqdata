@@ -80,11 +80,66 @@ class TestNodeData(TestCase):
         assert list(c.X.loc['sample1']) == [23., 10., 0., 0.]
         assert list(c.X.loc['sample5']) == [21., 2., 0., 10.]
 
-        # update
+    def test_update_node(self):
+        '''
+        update X with identical name
+        '''
+        c = NodeData(RootData(), 'test', df4)
+        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'])
+        s.name = 'sample5'
+        c.put_data(s)
         s = pd.Series([10, 20], index=['gene1', 'gene2'])
         s.name = 'sample5'
         c.put_data(s)
         assert list(c.X.loc['sample5']) == [31., 22., 0., 10.]
+
+    def test_duplicate_col(self):
+        '''
+        later override the previous
+        '''
+        c = NodeData(RootData(), 'test', df_dup1)
+        assert set(c.X) == {'gene1', 'gene2'}
+        assert list(c.X['gene2']) == [0., 10., 78.] 
+
+    def test_duplicate_index(self):
+        c = NodeData(RootData(), 'test', df_dup2)
+        assert list(c.X['gene1']) == [23.0, 10.0, .0, .0]
+        assert list(c.X['gene2']) == [10.0, 120.0, .0, .0]
+        assert list(c.X['gene3']) == [.0, 10.0, 78.0, .0]
+
+    def test_sort(self):
+        c = NodeData(RootData(), 'test', df_dup2)
+        assert list(df_dup2) == ['gene3', 'gene1', 'gene2']
+        assert list(c.X) == ['gene1', 'gene2', 'gene3']
+        assert list(c.X.index) == ['sample1', 'sample2', 'sample3', 'sample4']
+
+    def test_X_in_matrx(self):
+        '''
+        not index/column names are defined
+        '''
+        c = NodeData(RootData(), 'test', np.eye(3))
+        assert list(c.X) == [0, 1, 2]
+        assert list(c.X.index) == [0, 1, 2]
+
+    def test_X_data_type(self):
+        '''
+        different data type
+        '''
+        c = NodeData(RootData(), 'test', df_wrong)
+        res = c.X.map(type)
+        assert res.all()['age'] == True
+        assert res.all()['gender'] == True
+
+    def test_load_X(self):
+        '''
+        load X in loop
+        '''
+        c = NodeData(RootData(), 'test')
+        for s in (s1, s2, pd.Series(None)):
+            c.put_data(s)
+        assert c.X.shape == (3, 4)
+        assert list(c.X) == list('abcd')
+        assert list(c.X.index) == [1, 2, 3]
 
     def test_labels_1(self):
         '''

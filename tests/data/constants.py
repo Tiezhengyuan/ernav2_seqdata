@@ -22,6 +22,7 @@ df4 = pd.DataFrame({
     'gene3': {'sample1':0, 'sample2':10, 'sample3':78},
 })
 
+
 annot = {
     'gene1': {
         'geneID': '03455',
@@ -50,3 +51,20 @@ samples = {
     },
 }
 
+
+df_dup1 = pd.DataFrame({
+    'gene1': {'sample1':23, 'sample2':10, 'sample3':0},
+    'gene2': {'sample1':10, 'sample2':40, 'sample3':120},
+    'gene2': {'sample1':0, 'sample2':10, 'sample3':78},
+})
+
+df_dup2 = pd.DataFrame({
+    'gene3': {'sample2':0, 'sample2':10, 'sample3':78},
+    'gene1': {'sample1':23, 'sample2':10, 'sample4':0},
+    'gene2': {'sample1':10, 'sample2':40, 'sample2':120},
+})
+
+df_wrong = pd.DataFrame({
+    'age': [1, 2, 3],
+    'gender': ['F', 'M', 'U'],
+})

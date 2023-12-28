@@ -1,5 +1,5 @@
 # ernav2_seqdata
-A new data type known as SeqData is designed for RNA-seq data analysis. The data type is designed for integration of varous data set from various sources and dimensions:
+A new data type known as SeqData is designed for RNA-seq data analysis. The data type is designed for data integration from various sources and dimensions:
 
 <img src="static/mrnaseq_data.png" width="900" height="250">
 

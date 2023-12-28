@@ -16,8 +16,9 @@ class NodeData:
         self.parent, self.children = parent, []
         parent.children.append(self)
         self.name = name if name else 'default'
-        self.X = pd.DataFrame(X, dtype='float')
-        # cross row
+        # X: sort and fill NA
+        self.X = pd.DataFrame(X).sort_index(axis=0).sort_index(axis=1).fillna(0)
+        # cross rows
         self.samples = parent.samples
         self.row_stat = StatData(axis=0)
         # cross columns
