@@ -44,7 +44,6 @@ class TestNodeData(TestCase):
         assert c1.children == [c3,]
         assert root.children == [c1, c2]
 
-
     def test_default_node(self):
         c = NodeData(RootData(), 'test', df4)
 
@@ -62,19 +61,50 @@ class TestNodeData(TestCase):
         assert list(res) == ['gene1', 'gene2', 'gene3']
         assert list(res.index) == []
 
+    @data(
+        [
+            pd.Series(None, name='s1'),
+            pd.Series([1,2], index=list('ab'), name='s2'),
+            pd.Series([1,2], index=list('ab'), name='s1'),
+        ],
+        [
+            pd.Series([1,2], index=list('ab'), name='s1'),
+            pd.Series(None, name='s2'),
+            pd.Series([1,2], index=list('ab'), name='s1'),
+        ],
+        [
+            pd.Series(None, name='s1'),
+            pd.Series(None, name='s2'),
+            pd.Series(None, name='s1'),
+        ],
+        [
+            pd.Series([1,2], index=list('ab'), name='s1'),
+            pd.Series([1,3], index=list('ac'), name='s2'),
+            pd.Series([2,2,3], index=list('abc'), name='s1'),
+        ],
+        [
+            pd.Series([2,4], index=list('bd'), name='s1'),
+            pd.Series([3,1], index=list('ca'), name='s2'),
+            pd.Series([1,2,3,4], index=list('abcd'), name='s1'),
+        ],
+    )
+    @unpack
+    def test_combine_series(self, s1, s2, expect):
+        res = NodeData.combine_series(s1,s2)
+        assert res.equals(expect) == True
+
+
     def test_put_data(self):
         c = NodeData(RootData(), 'test', df4)
 
-        s = pd.Series([0, 10, 212], index=['gene3', 'gene1', 'gene2'])
-        s.name = 'sample4'
+        s = pd.Series([0, 10, 212], index=['gene3', 'gene1', 'gene2'], name='sample4')
         c.put_data(s)
         assert list(c.X)== ['gene1', 'gene2', 'gene3']
         assert list(c.X.loc['sample1']) == list(df4.loc['sample1'])
         assert list(c.X.loc['sample4']) == [10., 212., 0.]
 
         # different columns
-        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'])
-        s.name = 'sample5'
+        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'], name='sample5')
         c.put_data(s)
         assert list(c.X)== ['gene1', 'gene2', 'gene3', 'gene4']
         assert list(c.X.loc['sample1']) == [23., 10., 0., 0.]
@@ -85,13 +115,24 @@ class TestNodeData(TestCase):
         update X with identical name
         '''
         c = NodeData(RootData(), 'test', df4)
-        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'])
-        s.name = 'sample5'
+        
+        # new row
+        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'], name='sample5')
         c.put_data(s)
-        s = pd.Series([10, 20], index=['gene1', 'gene2'])
-        s.name = 'sample5'
+        assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4']
+        assert list(c.X.loc['sample5']) == [21.0, 2.0, 0.0, 10.0]
+
+        # update values: add values
+        s = pd.Series([10, 20], index=['gene1', 'gene2'], name='sample5')
         c.put_data(s)
+        assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4']
         assert list(c.X.loc['sample5']) == [31., 22., 0., 10.]
+
+        # add new row
+        s = pd.Series([30, 10], index=['gene5', 'gene1'], name='sample5')
+        res = c.put_data(s)
+        assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4', 'gene5']
+        assert list(c.X.loc['sample5']) == [41.0, 22.0, 0.0, 10.0, 30.0]
 
     def test_duplicate_col(self):
         '''
@@ -181,8 +222,7 @@ class TestNodeData(TestCase):
         sample info and annotations
         '''
         c = NodeData(RootData(samples, annot), 'test', df4)
-        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'])
-        s.name = 'sample4'
+        s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'], name='sample4')
         c.put_data(s)
 
         df = c.row_labels(labels)

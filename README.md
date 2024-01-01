@@ -14,7 +14,7 @@ SeqData is tree structure. The root contains data of phenotypes and annotations.
 <img src="static/SeqData_data_structure.png" width="350" height="300">
 
 ## installation
-It is convenient to install the repository using pip. The repository could be found at https://pypi.org/manage/project/rnaseqdata/releases/.
+It is convenient to install the repository using pip. The package could be found at [Pythone Package Index](https://pypi.org/manage/project/rnaseqdata/releases/).
 ```
 pip install --upgrade rnaseqdata
 ```
