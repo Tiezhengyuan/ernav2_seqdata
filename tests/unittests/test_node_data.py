@@ -120,19 +120,37 @@ class TestNodeData(TestCase):
         s = pd.Series([10, 21, 2], index=['gene4', 'gene1', 'gene2'], name='sample5')
         c.put_data(s)
         assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4']
-        assert list(c.X.loc['sample5']) == [21.0, 2.0, 0.0, 10.0]
+        assert list(c.X.loc['sample5']) == [21.0, 2.0, .0, 10.0]
+        assert list(c.X.loc['sample1']) == [23.0, 10.0, .0, .0]
 
         # update values: add values
         s = pd.Series([10, 20], index=['gene1', 'gene2'], name='sample5')
         c.put_data(s)
         assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4']
-        assert list(c.X.loc['sample5']) == [31., 22., 0., 10.]
+        assert list(c.X.loc['sample5']) == [31., 22., .0, 10.]
+        assert list(c.X.loc['sample1']) == [23.0, 10.0, .0, .0]
 
         # add new row
         s = pd.Series([30, 10], index=['gene5', 'gene1'], name='sample5')
         res = c.put_data(s)
         assert list(c.X) == ['gene1', 'gene2', 'gene3', 'gene4', 'gene5']
-        assert list(c.X.loc['sample5']) == [41.0, 22.0, 0.0, 10.0, 30.0]
+        assert list(c.X.loc['sample5']) == [41.0, 22.0, .0, 10.0, 30.0]
+        assert list(c.X.loc['sample1']) == [23.0, 10.0, .0, .0, .0]
+
+    def test_put_data_duplicate(self):
+        c = NodeData(RootData(), 'test')
+        s = pd.Series([0,1,2,3,4], index=list('cabba'), name='s1')
+        c.put_data(s)
+        assert list(c.X) == list('abc')
+        assert list(c.X.index) == ['s1',]
+        assert list(c.X.loc['s1']) == [1.0, 2.0, .0]
+
+        s = pd.Series([1,2,3], index=list('..a'), name='s2')
+        c.put_data(s)
+        assert list(c.X) == list('abc.')
+        assert list(c.X.index) == ['s1', 's2']
+        assert list(c.X.loc['s1']) == [1.0, 2.0, .0, .0]
+        assert list(c.X.loc['s2']) == [3.0, .0, .0, 1.0]
 
     def test_duplicate_col(self):
         '''

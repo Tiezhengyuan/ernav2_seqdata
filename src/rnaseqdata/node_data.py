@@ -56,17 +56,22 @@ class NodeData:
         '''
         index names of series are columns names
         '''
+        # remove duplicates and sort by index name
+        new_data = new_data[~new_data.index.duplicated()].sort_index()
+        # confirm name of series
         if not new_data.name:
             new_data.name = self.X.shape[0] + 1
         row_name = new_data.name
+
         # update row
         if row_name in list(self.X.index):
             _data = NodeData.combine_series(self.X.loc[row_name], new_data)
             self.X.loc[row_name, _data.index] = _data
-            return self.X.loc[row_name]
         #Or add new row
-        _data = pd.DataFrame(new_data).T
-        self.X = pd.concat([self.X, _data], axis=0).fillna(0)
+        else:
+            _data = pd.DataFrame(new_data).T
+            self.X = pd.concat([self.X, _data], axis=0)
+        self.X = self.X.fillna(0)
         return self.X.loc[row_name]
 
     @staticmethod
