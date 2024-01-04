@@ -16,11 +16,13 @@ class AnnotData:
         self.data = pd.Series(data, dtype='object')
     
     def from_json(self, infile:str):
-        if not os.file.isfile(infile):
-            return None
+        if not os.path.isfile(infile):
+            return False
         with open(infile, 'r') as f:
             _data = pd.Series(json.load(f), dtype='object')
             self.data = self.data.combine_first(_data)
+        return True
+
     
     def to_json(self, outfile:str):
         try:

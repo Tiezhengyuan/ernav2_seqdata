@@ -1,8 +1,10 @@
+import os
 from unittest import TestCase
 from ddt import ddt, data, unpack
 
 from src.rnaseqdata import AnnotData
 from tests.data.constants import *
+from tests import TMP_DIR
 
 @ddt
 class TestAnnotData(TestCase):
@@ -19,6 +21,28 @@ class TestAnnotData(TestCase):
         assert c.data.to_dict() == expect_data
     
     @data(
+        [None, [], [],],
+        [{}, [], [],],
+        [{'a':1, 'b':2}, ['a', 'b'], [1, 2],],
+        [
+            {'a': {'x':4, 'y':3}, 'b': {'z':2, 'y':3}},
+            ['a', 'b'],
+            [{'x': 4, 'y': 3}, {'z': 2, 'y': 3}],
+        ],
+        # wrong data
+        [{'a':1, 'a':{}}, ['a',], [{}],],
+    )
+    @unpack
+    def test_json(self, data, expect_index, expect_value):
+        c = AnnotData(0, data)
+        json_file = os.path.join(TMP_DIR, 'test.json')
+        res = c.to_json(json_file)
+        assert res == True
+        c.from_json(json_file)
+        assert list(c.data.index) == expect_index
+        assert list(c.data) == expect_value
+
+    @data(
         [None, None, (2,3)],
         [None, ['sample_name', 'age', 'gender'], (2,3)],
         [['sample1', 'sample2'], ['sample_name', 'age', 'gender'], (2,3)],
@@ -27,7 +51,7 @@ class TestAnnotData(TestCase):
         [['sample1',], ['sample_name', 'age', 'level'], (1,3)],
     )
     @unpack
-    def test_to_df_1(self, key1, key2, expect_shape):
+    def test_to_df_samples(self, key1, key2, expect_shape):
         c = AnnotData(0, samples)
         res = c.to_df(key1, key2)
         assert res.shape == expect_shape
@@ -44,7 +68,7 @@ class TestAnnotData(TestCase):
         [None, ['geneID', 'geneName', 'GO'], (3,2)],
     )
     @unpack
-    def test_to_df_2(self, key1, key2, expect_shape):
+    def test_to_df_annotations(self, key1, key2, expect_shape):
         c = AnnotData(1, annot)
         res = c.to_df(key1, key2)
         assert res.shape == expect_shape
