@@ -2,7 +2,7 @@ import os
 from unittest import TestCase
 
 from src.rnaseqdata import AnnotData
-from tests import DATA_DIR, TMP_DIR
+from tests import DATA_DIR
 
 class TestAnnotations(TestCase):
 

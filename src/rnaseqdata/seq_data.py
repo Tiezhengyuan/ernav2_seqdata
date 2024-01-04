@@ -1,7 +1,7 @@
 '''
 SeqData(): A container include root and all nodes
 '''
-
+import os
 import pandas as pd
 
 from .stat_data import StatData
@@ -14,7 +14,22 @@ class SeqData:
     def __init__(self, root:RootData=None):
         self.root = root if root else RootData()
         self.nodes = {}
+
+    def put_samples(self, input):
+        if isinstance(input, dict):
+            self.root.samples.put(input)
+        elif isinstance(input, str) and os.path.isfile(input):
+            self.root.samples.from_json(input)
     
+    def put_variables(self, input):
+        if isinstance(input, dict):
+            self.root.variables.put(input)
+        elif isinstance(input, str):
+            if os.path.isfile(input):
+                self.root.variables.from_json(input)
+            else:
+                print(f"{input} should be file path if input is string type.")
+
     def data_names(self) -> list:
         return list(self.nodes)
     
