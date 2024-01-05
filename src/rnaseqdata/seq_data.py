@@ -17,18 +17,20 @@ class SeqData:
 
     def put_samples(self, input):
         if isinstance(input, dict):
-            self.root.samples.put(input)
+            return self.root.samples.put(input)
         elif isinstance(input, str) and os.path.isfile(input):
-            self.root.samples.from_json(input)
+            return self.root.samples.from_json(input)
+        # list/series/None
+        return self.root.samples.update(input)
     
     def put_variables(self, input):
         if isinstance(input, dict):
-            self.root.variables.put(input)
+            return self.root.variables.put(input)
         elif isinstance(input, str):
             if os.path.isfile(input):
-                self.root.variables.from_json(input)
-            else:
-                print(f"{input} should be file path if input is string type.")
+                return self.root.variables.from_json(input)
+        # list/series/None
+        return self.root.variables.update(input)
 
     def data_names(self) -> list:
         return list(self.nodes)
