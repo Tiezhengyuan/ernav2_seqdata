@@ -2,15 +2,15 @@ name: Publish package to PyPI
 
 on:
   push:
-    tags:
-     - '*'
+    branches:
+     - main
 
 jobs:
   build-n-publish:
     name: Build and publish SeqData to PyPI
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@main
+    - uses: actions/checkout
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
@@ -29,6 +29,6 @@ jobs:
       run: >-
         python setup.py sdist bdist_wheel
     - name: Publish distribution to PyPI
-      uses: pypa/gh-action-pypi-publish@main
+      uses: pypa/gh-action-pypi-publish
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
