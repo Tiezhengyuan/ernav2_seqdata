@@ -1,7 +1,5 @@
 name: Publish package to PyPI
 
-name: Upload Python Package
-
 on:
   release:
     types: [published]
