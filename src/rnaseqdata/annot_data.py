@@ -4,6 +4,8 @@ Data is pd.Series. data type is object
 '''
 import os
 import json
+import sys
+print(sys.path)
 import pandas as pd
 
 class AnnotData:
