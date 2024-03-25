@@ -9,7 +9,7 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 
 setup(
     name="rnaseqdata",
-    version='0.0.6',
+    version='0.0.7',
     author="Tiezheng Yuan",
     author_email="tiezhengyuan@hotmail.com",
     description="New Data type known as SeqData for RNA-Seq data analysis",
