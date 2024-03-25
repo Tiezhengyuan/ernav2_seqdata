@@ -10,7 +10,7 @@ jobs:
     name: Build and publish SeqData to PyPI
     runs-on: ubuntu-18.04
     steps:
-    - uses: actions/checkout@master
+    - uses: actions/checkout@main
     - name: Set up Python 3.11
       uses: actions/setup-python@v3
       with:
@@ -28,7 +28,7 @@ jobs:
     - name: Build a binary wheel
       run: >-
         python setup.py sdist bdist_wheel
-    - name: Publish distribution 📦 to PyPI
-      uses: pypa/gh-action-pypi-publish@master
+    - name: Publish distribution to PyPI
+      uses: pypa/gh-action-pypi-publish@main
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
