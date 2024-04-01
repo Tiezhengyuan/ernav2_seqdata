@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 import codecs
 import os
 
@@ -9,14 +9,14 @@ with codecs.open(os.path.join(here, "README.md"), encoding="utf-8") as fh:
 
 setup(
     name="rnaseqdata",
-    version='0.0.7',
+    version='0.0.8',
     author="Tiezheng Yuan",
     author_email="tiezhengyuan@hotmail.com",
     description="New Data type known as SeqData for RNA-Seq data analysis",
     url = "https://github.com/Tiezhengyuan/ernav2_seqdata",
     long_description_content_type="text/markdown",
     long_description=long_description,
-    packages=find_packages(),
+    package_dir={'': 'src'},
     install_requires=['numpy', 'pandas'],
     keywords=['pypi', 'cicd', 'python'],
     classifiers=[
